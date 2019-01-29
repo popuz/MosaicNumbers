@@ -1,15 +1,27 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
+using UnityEngine;
 
 namespace MosaicNumbers.Tests
 {
     public class GameLogicTests
     {
         private GameLogic _game;
-        
-        private void HitAllNumbers()
+
+        private int GetRandomGridNumber() => UnityEngine.Random.Range(1, _game.MaxNumberOnGrid);
+
+        private int GetNotTargetNumber()
         {
-            for (var i = _game.Step; i <= _game.MaxNumber; i++)
-                _game.HitNumber(_game.Step);
+            var num = GetRandomGridNumber();
+            while (num == _game.TargetNumber)
+                num = GetRandomGridNumber();
+            return num;
+        }
+        
+        private void HitAllNumbersInOrder()
+        {
+            for (var i = 1; i <= _game.MaxNumberOnGrid; i++)
+                _game.HitGridNumber(_game.TargetNumber);
         }
 
         [SetUp]
@@ -20,36 +32,45 @@ namespace MosaicNumbers.Tests
         }
 
         [Test]
-        public void WhenGameRoundStarts_StepEqualToOne() => Assert.AreEqual(1, _game.Step);
+        public void WhenGameStarts_PlayerTriesEqualsToZero() => Assert.AreEqual(0, _game.PlayerTries);
+        
+        [Test]
+        public void WhenGameStarts_TargetNumberEqualToOne() => Assert.AreEqual(1, _game.TargetNumber);
+
 
         [Test]
-        public void WhenHitRightNumber_IncreaseStep()
+        public void WhenHitNumber_TriesIncreased()
         {
-            var startStep = _game.Step;
-            _game.HitNumber(_game.Step);
-            Assert.AreEqual(startStep + 1, _game.Step);
+            var startTries = _game.PlayerTries;
+            _game.HitGridNumber(GetRandomGridNumber());
+            Assert.AreEqual(startTries + 1, _game.PlayerTries);
         }
 
         [Test]
-        public void WhenHitWrongNumber_StepUnchanged()
+        public void WhenHitRightNumber_TargetNumberChanged()
         {
-            var startStep = _game.Step;
-            var number = UnityEngine.Random.Range(1, _game.MaxNumber);
-
-            _game.HitNumber(number == _game.Step ? number - 1 : number);
-
-            Assert.AreEqual(startStep, _game.Step);
+            var startTargetNumber = _game.TargetNumber;
+            _game.HitGridNumber(_game.TargetNumber);
+            Assert.AreNotEqual(startTargetNumber, _game.TargetNumber);
         }
 
         [Test]
-        public void WhenHitAllNumbers_StepsEqualToMaxNumberPlusOne()
+        public void WhenHitWrongNumber_TargetNumberUnchanged()
         {
-            HitAllNumbers();
-            Assert.AreEqual(_game.MaxNumber + 1, _game.Step);
+            var startTargetNumber = _game.TargetNumber;
+            _game.HitGridNumber(GetNotTargetNumber());
+            Assert.AreEqual(startTargetNumber, _game.TargetNumber);
         }
 
         [Test]
-        public void WhenRoundStarts_TimerIsEqualZero() => Assert.AreEqual(0f, _game.RoundTime);
+        public void WhenHitAllNumbers_TargetNumberEqualMaxNumber()
+        {
+            HitAllNumbersInOrder();
+            Assert.AreEqual(_game.MaxNumberOnGrid, _game.TargetNumber);
+        }
+
+        [Test]
+        public void WhenRoundStarts_TimerIsEqualZero() => Assert.AreEqual(0f, _game.TimeElapsedFromStart);
 
         [TestCase(0, 1f)]
         [TestCase(1, 10f)]
@@ -61,17 +82,24 @@ namespace MosaicNumbers.Tests
         {
             for (var i = 0; i < ticks; i++)
                 _game.Tick(deltaTime);
-            Assert.AreEqual(deltaTime * ticks, _game.RoundTime);
+            Assert.AreEqual(deltaTime * ticks, _game.TimeElapsedFromStart);
         }
 
         [Test]
         public void WhenHitAllNumbers_TimerNoMoreIncreased()
         {
-            HitAllNumbers();
-            var gameOverTime = _game.RoundTime;
+            HitAllNumbersInOrder();
+            var gameOverTime = _game.TimeElapsedFromStart;
             _game.Tick(10f);
-            
-            Assert.AreEqual(gameOverTime, _game.RoundTime);
+
+            Assert.AreEqual(gameOverTime, _game.TimeElapsedFromStart);
         }
-    }
+
+        [Test]
+        public void WhenHitAllNumbers_GameStateChangedToFinished()
+        {
+            HitAllNumbersInOrder();
+            Assert.AreEqual(_game.State,GameStates.Finished);
+        }
+    }    
 }
