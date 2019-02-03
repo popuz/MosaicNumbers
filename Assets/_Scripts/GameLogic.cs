@@ -9,12 +9,14 @@ namespace MosaicNumbers
 
         public GameStates State;
 
-        public void Start()
-        {
+        public void StartGame(int startTargetNumber,int maxNumberOnGrid)
+        {                        
+            TargetNumber = startTargetNumber;
+            MaxNumberOnGrid = maxNumberOnGrid;
+            
             PlayerTries = 0;
-            TargetNumber = 1;
-            MaxNumberOnGrid = 25;
             TimeElapsedFromStart = 0f;
+            
             State = GameStates.InPlay;
         }
 

@@ -28,7 +28,7 @@ namespace MosaicNumbers.Tests
         public void Initialize()
         {
             _game = new GameLogic();
-            _game.Start();
+            _game.StartGame(1,25);
         }
 
         [Test]
