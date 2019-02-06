@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace MosaicNumbers
@@ -8,7 +9,7 @@ namespace MosaicNumbers
     {
         private GameBoard _board;
         private GameLogic _logic;
-        
+        private readonly List<GameCell> _gameCells = new List<GameCell>();
         private void Awake()
         {
             _board = GetComponent<GameBoard>();
@@ -17,14 +18,20 @@ namespace MosaicNumbers
 
         private void Start()
         {
-            _board.Construct(2,2);
-            _logic.StartGame(1,4);
+            _board.Construct(2,5);
+            _board.SetNewCellNumbers();
+            _logic.StartGame(1, _board.MaxNumberOfCells);
         }
         
         private void Update()
         {
+            _logic.Tick(Time.deltaTime);
+            
             if(Input.GetKeyDown(KeyCode.Escape))
                 Application.Quit();
-        }
+            
+            if(Input.GetKeyDown(KeyCode.Space))
+                _board.SetNewCellNumbers();
+        }                
     }
 }
