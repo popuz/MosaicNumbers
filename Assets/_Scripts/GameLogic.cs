@@ -9,18 +9,16 @@ namespace MosaicNumbers
 
         public GameStates State;
 
-        public void Start()
-        {
+        public void StartGame(int startTargetNumber,int maxNumberOnBoard)
+        {                        
+            TargetNumber = startTargetNumber;
+            MaxNumberOnGrid = maxNumberOnBoard;
+            
             PlayerTries = 0;
-            TargetNumber = 1;
-            MaxNumberOnGrid = 25;
             TimeElapsedFromStart = 0f;
+            
             State = GameStates.InPlay;
         }
-
-        public void Tick(float deltaTime) => TimeElapsedFromStart += CanPlay() ? deltaTime : 0;
-
-        private bool CanPlay() => State == GameStates.InPlay;
 
         public void HitGridNumber(int number)
         {
@@ -29,14 +27,15 @@ namespace MosaicNumbers
             if (number == TargetNumber)
             {
                 if (number == MaxNumberOnGrid)
-                    Finish();
+                    FinishTheGame();
                 else
                     ChangeTargetNumberByRule();
             }
         }
-
-        private void Finish() => State = GameStates.Finished;
-
+        private void FinishTheGame() => State = GameStates.Finished;
         private void ChangeTargetNumberByRule() => TargetNumber++;
+        
+        public void Tick(float deltaTime) => TimeElapsedFromStart += CanPlay() ? deltaTime : 0;
+        private bool CanPlay() => State == GameStates.InPlay;
     }
 }

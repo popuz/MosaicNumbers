@@ -1,6 +1,4 @@
-﻿using System;
-using NUnit.Framework;
-using UnityEngine;
+﻿using NUnit.Framework;
 
 namespace MosaicNumbers.Tests
 {
@@ -28,7 +26,7 @@ namespace MosaicNumbers.Tests
         public void Initialize()
         {
             _game = new GameLogic();
-            _game.Start();
+            _game.StartGame(1,25);
         }
 
         [Test]
