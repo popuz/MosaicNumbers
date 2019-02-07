@@ -9,7 +9,7 @@ namespace MosaicNumbers
     [RequireComponent(typeof(Button))]
     public class GameCell : MonoBehaviour, IPointerDownHandler
     {
-        public Action<int> OnCellPressed; 
+        public event Action<int> OnCellPressed; 
         
         private TMP_Text _text;
         private int _number;

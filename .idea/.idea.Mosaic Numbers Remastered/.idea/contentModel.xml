@@ -13,6 +13,10 @@
           <e p="GameCell.cs" t="Include" />
           <e p="GameLogic.cs" t="Include" />
           <e p="GameStates.cs" t="Include" />
+          <e p="UI" t="Include">
+            <e p="Collider2DRaycastFilter.cs" t="Include" />
+            <e p="ResultsUI.cs" t="Include" />
+          </e>
         </e>
         <e p="Test" t="Include">
           <e p="Editor" t="Include">
