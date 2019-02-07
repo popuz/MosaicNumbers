@@ -1,27 +1,33 @@
+using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace MosaicNumbers
 {
-    public class GameBoard : MonoBehaviour
-    {
-        [SerializeField] private GridLayoutGroup _gridLayout;
-        [SerializeField] private GameCell _cellPrefab;
-
-        private List<GameCell> _gameCells = new List<GameCell>();
-        private bool[] _numberIsOnBoard;
-
+    public class GameBoard 
+    {        
+        public List<GameCell> GameCells { get; } = new List<GameCell>();        
         public int MaxNumberOfCells { get; private set; }
+                
+        private readonly GridLayoutGroup _gridLayout;
+        private bool[] _numberIsOnBoard;
+        
+        private readonly Func<GameCell> CreateCell;
+
+        public GameBoard(GridLayoutGroup gridLayout, Func<GameCell> CellFactory)
+        {
+            CreateCell = CellFactory;
+            _gridLayout = gridLayout;
+        }
 
         public void Construct(int rows, int columns)
         {
             MaxNumberOfCells = rows * columns;
             PrepareGridLayout(rows, columns);
             FillLayoutWithElements(MaxNumberOfCells);            
-        }
-                       
+        }                       
         private void PrepareGridLayout(int rows, int columns)
         {
             _gridLayout.constraintCount = columns;
@@ -29,14 +35,14 @@ namespace MosaicNumbers
         }
         private void FillLayoutWithElements(int amount)
         {
-            for (var i = 0; i < amount; i++)
-                _gameCells.Add(Instantiate(_cellPrefab, _gridLayout.transform));
+            for (var i = 0; i < amount; i++)            
+                GameCells.Add(CreateCell());            
         }
 
         public void SetNewCellNumbers()
         {
             _numberIsOnBoard = new bool[MaxNumberOfCells];
-            foreach (var cell in _gameCells)            
+            foreach (var cell in GameCells)            
                 cell.SetNumber(FindFreeNumber());            
         }
         private int FindFreeNumber()
@@ -47,6 +53,16 @@ namespace MosaicNumbers
             
             _numberIsOnBoard[num] = true;
             return num + 1;
-        }                
+        }
+
+        public void Hide()
+        {
+            _gridLayout.gameObject.SetActive(false);
+        }
+
+        public void Show()
+        {
+            _gridLayout.gameObject.SetActive(true);
+        }
     }
 }

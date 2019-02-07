@@ -1,11 +1,16 @@
+using System;
+
 namespace MosaicNumbers
 {
     public class GameLogic
     {
+        public event Action OnRightAnswer;
+        public event Action OnGameFinish;
+        
         public int PlayerTries { get; private set; }
         public int TargetNumber { get; private set; }
         public int MaxNumberOnGrid { get; private set; }
-        public double TimeElapsedFromStart { get; private set; }
+        public float TimeElapsedFromStart { get; private set; }
 
         public GameStates State;
 
@@ -23,19 +28,23 @@ namespace MosaicNumbers
         public void HitGridNumber(int number)
         {
             PlayerTries++;
+            if (number != TargetNumber) return;
 
-            if (number == TargetNumber)
+            if (number == MaxNumberOnGrid)
             {
-                if (number == MaxNumberOnGrid)
-                    FinishTheGame();
-                else
-                    ChangeTargetNumberByRule();
+                FinishTheGame();
+                OnGameFinish?.Invoke();
+            }
+            else 
+            {
+                ChangeTargetNumberByRule();
+                OnRightAnswer?.Invoke();
             }
         }
         private void FinishTheGame() => State = GameStates.Finished;
         private void ChangeTargetNumberByRule() => TargetNumber++;
         
         public void Tick(float deltaTime) => TimeElapsedFromStart += CanPlay() ? deltaTime : 0;
-        private bool CanPlay() => State == GameStates.InPlay;
+        private bool CanPlay() => State == GameStates.InPlay;        
     }
 }
