@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityEngine.XR.WSA.Input;
 
 namespace MosaicNumbers
 {
     [RequireComponent(typeof(ResultsUI))]
     public class Game : MonoBehaviour
     {
-        [SerializeField] private GridLayoutGroup _GameBoardGridLayout;
+        [SerializeField] private GridLayoutGroup _gameBoardGridLayout;
         [SerializeField] private GameCell _cellPrefab;
         [SerializeField] private int _rows, _columns;
         [SerializeField, Tooltip("If should shuffle game board after each mistaken touch")]
@@ -23,13 +22,13 @@ namespace MosaicNumbers
         {
             _resultsUI = GetComponent<ResultsUI>();
 
-            _board = new GameBoard(_GameBoardGridLayout, CellFactory);
+            _board = new GameBoard(_gameBoardGridLayout, CellFactory);
             _logic = new GameLogic();
         }
 
         private GameCell CellFactory()
         {
-            return Instantiate(_cellPrefab, _GameBoardGridLayout.transform);
+            return Instantiate(_cellPrefab, _gameBoardGridLayout.transform);
         }
 
         private void Start()
