@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class SplashScreenImageUI : MonoBehaviour
-{
+{    
     [SerializeField] private AnimationCurve _animCurve;
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private Material _blurMat;
